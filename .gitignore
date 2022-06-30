@@ -27,3 +27,16 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+
+src/renderer/node_modules
+src/renderer/.env.local
+src/renderer/.umirc.local.ts
+src/renderer/config/config.local.ts
+src/renderer/src/.umi
+src/renderer/src/.umi-production
+src/renderer/.umi
+src/renderer/.umi-production
+src/renderer/.umi-test
+src/renderer/dist
+src/renderer/.mfsu
