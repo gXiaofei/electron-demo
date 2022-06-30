@@ -65,7 +65,7 @@ const installExtensions = async () => {
 
 // 创建窗口
 const createWindow = async () => {
-    if (isDebug) {
+    if (process.env.NODE_ENV === 'development') {
         await installExtensions();
     }
 
@@ -94,7 +94,7 @@ const createWindow = async () => {
         },
     });
 
-    mainWindow.loadURL(resolveHtmlPath('index.html'));
+    mainWindow.loadURL(resolveHtmlPath());
 
     mainWindow.on('ready-to-show', () => {
         if (!mainWindow) {
@@ -122,7 +122,7 @@ const createWindow = async () => {
 
     // 自动更新
     // eslint-disable-next-line
-    new AppUpdater();
+    // new AppUpdater();
 };
 
 const gotTheLock = app.requestSingleInstanceLock();
