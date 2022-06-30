@@ -6,6 +6,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import showNotification from './showNotification';
 
 // 协议
 if (process.defaultApp) {
@@ -156,6 +157,13 @@ if (!gotTheLock) {
                 // On macOS it's common to re-create a window in the app when the
                 // dock icon is clicked and there are no other windows open.
                 if (mainWindow === null) createWindow();
+            });
+        })
+        .then(() => {
+            showNotification({
+                title: '启动应用',
+                subtitle: '子标题',
+                body: '首次应用启动',
             });
         })
         .catch(console.log);
