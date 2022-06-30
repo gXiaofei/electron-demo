@@ -9,7 +9,7 @@
     "build:analyze": "ANALYZE=true npm run build",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist build && npm run build && electron-builder build -m",
+    "package": "ts-node ./.erb/scripts/clean.js dist build && npm run build && electron-builder build -mw",
     "debug-mac:prod": "DEBUG_PROD=true npm run package",
     "debug-win:prod": "npx cross-env DEBUG_PROD=true npm run package",
     "prepare": "husky install",

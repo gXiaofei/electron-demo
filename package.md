@@ -1,17 +1,28 @@
 1. 日志
-electron-log => main.ts
+   electron-log
 
 2. 客户端更新
-electron-updater => main.ts
+   electron-updater
 
-3. nodejs下babel编译es6后异常定位助手:source-map-support
-source-map-support => main.ts
+3. 客户端打包
+   electron-builder
 
-4. 开启debug模式
-electron-debug => main.ts
+4. nodejs 下 babel 编译 es6 后异常定位助手:source-map-support
+   source-map-support
 
-5. 添加 chromium 扩展
-electron-devtools-installer => main.ts
+5. 开启 debug 模式
+   electron-debug
 
-6. 处理图标
-electron-icon-builder
+6. 添加 chromium 扩展
+   electron-devtools-installer
+
+7. 处理图标
+   electron-icon-builder
+
+8. umi 框架
+   umi
+
+9. 单测
+   jest
+   @testing-library/react
+   @testing-library/jest-dom
