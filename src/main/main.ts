@@ -1,12 +1,24 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
+// 协议
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('process-assistant', process.execPath, [
+            path.resolve(process.argv[1]),
+        ]);
+    } else {
+        app.setAsDefaultProtocolClient('process-assistant');
+    }
+}
+
+// 更新
 class AppUpdater {
     constructor() {
         log.transports.file.level = 'info';
@@ -23,6 +35,7 @@ ipcMain.on('ipc-example', async (event, arg) => {
     event.reply('ipc-example', msgTemplate('pong'));
 });
 
+// nodejs下babel编译es6后异常定位
 if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support');
     sourceMapSupport.install();
@@ -35,6 +48,7 @@ if (isDebug) {
     require('electron-debug')();
 }
 
+// 添加chromium扩展
 const installExtensions = async () => {
     const installer = require('electron-devtools-installer');
     const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -48,6 +62,7 @@ const installExtensions = async () => {
         .catch(console.log);
 };
 
+// 创建窗口
 const createWindow = async () => {
     if (isDebug) {
         await installExtensions();
@@ -63,9 +78,14 @@ const createWindow = async () => {
 
     mainWindow = new BrowserWindow({
         show: false,
-        width: 1024,
-        height: 728,
+        width: 480,
+        height: 580,
         icon: getAssetPath('icon.png'),
+        center: true,
+        resizable: false,
+        frame: false,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: true,
         webPreferences: {
             preload: app.isPackaged
                 ? path.join(__dirname, 'preload.js')
@@ -93,36 +113,55 @@ const createWindow = async () => {
     const menuBuilder = new MenuBuilder(mainWindow);
     menuBuilder.buildMenu();
 
-    // Open urls in the user's browser
+    // 打开用户浏览器中的URL
     mainWindow.webContents.setWindowOpenHandler((edata) => {
         shell.openExternal(edata.url);
         return { action: 'deny' };
     });
 
-    // Remove this if your app does not use auto updates
+    // 自动更新
     // eslint-disable-next-line
     new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
+const gotTheLock = app.requestSingleInstanceLock();
 
-app.on('window-all-closed', () => {
-    // Respect the OSX convention of having the application in memory even
-    // after all windows have been closed
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
+if (!gotTheLock) {
+    app.quit();
+} else {
+    /**
+     * Add event listeners...
+     */
 
-app.whenReady()
-    .then(() => {
-        createWindow();
-        app.on('activate', () => {
-            // On macOS it's common to re-create a window in the app when the
-            // dock icon is clicked and there are no other windows open.
-            if (mainWindow === null) createWindow();
-        });
-    })
-    .catch(console.log);
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // 用户正在尝试运行第二个实例，我们需要让焦点指向我们的窗口
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.focus();
+        }
+    });
+
+    app.on('window-all-closed', () => {
+        // Respect the OSX convention of having the application in memory even
+        // after all windows have been closed
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
+    });
+
+    app.whenReady()
+        .then(() => {
+            createWindow();
+            app.on('activate', () => {
+                // On macOS it's common to re-create a window in the app when the
+                // dock icon is clicked and there are no other windows open.
+                if (mainWindow === null) createWindow();
+            });
+        })
+        .catch(console.log);
+
+    // macOS 处理网页打开的url
+    app.on('open-url', (event, url) => {
+        dialog.showErrorBox('欢迎回来', `导向自: ${url}`);
+    });
+}
