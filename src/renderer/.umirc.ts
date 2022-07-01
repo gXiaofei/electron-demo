@@ -1,13 +1,12 @@
 const isProd = process.env.NODE_ENV === 'production';
-import { defineConfig } from 'umi';
-export default defineConfig({
+export default {
     history: { type: 'hash' },
     npmClient: 'npm',
     outputPath: '../../release/app/dist/renderer',
     publicPath: isProd ? './' : '/',
     routes: [
-        { path: '/', component: '@/pages/index' },
+        { path: '/', component: '@/pages/Login' },
         { path: '/login', component: '@/pages/Login' },
         { path: '/docs', component: '@/pages/Docs' },
     ],
-});
+};

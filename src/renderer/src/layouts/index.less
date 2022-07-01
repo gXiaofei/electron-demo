@@ -1,10 +1,13 @@
-.navs {
-  ul {
-    padding: 0;
-    list-style: none;
-    display: flex;
-  }
-  li {
-    margin-right: 1em;
-  }
+.container {
+    width: 100vw;
+    height: 100vh;
+
+    // 拖拽
+    .dragBar {
+        position: fixed;
+        top: 0;
+        width: 100vw;
+        height: 30px;
+        -webkit-app-region: drag;
+    }
 }
