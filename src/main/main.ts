@@ -1,13 +1,20 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
+import path from 'path';
+import {
+    HEIGHT,
+    LOGIN_HEIGHT,
+    LOGIN_WIDTH,
+    MIN_HEIGHT,
+    MIN_WIDTH,
+    WIDTH,
+} from './constants';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
 import showNotification from './showNotification';
-
+import { resolveHtmlPath } from './util';
 // 协议
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
@@ -34,6 +41,20 @@ ipcMain.on('ipc-example', async (event, arg) => {
     const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
     console.log(msgTemplate(arg));
     event.reply('ipc-example', msgTemplate('pong'));
+});
+
+ipcMain.on('login', (event, args) => {
+    if (args[0] === true) {
+        if (mainWindow) {
+            mainWindow.setResizable(true);
+            mainWindow.setMinimumSize(MIN_WIDTH, MIN_HEIGHT);
+            mainWindow.setSize(WIDTH, HEIGHT, true);
+        }
+    } else if (mainWindow) {
+        mainWindow.setResizable(false);
+        mainWindow.setMinimumSize(LOGIN_WIDTH, LOGIN_HEIGHT);
+        mainWindow.setSize(LOGIN_WIDTH, LOGIN_HEIGHT, true);
+    }
 });
 
 // nodejs下babel编译es6后异常定位

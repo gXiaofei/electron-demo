@@ -1,2 +1,1 @@
-// eslint-disable-next-line
-import 'umi/typings';
+import '@umijs/max/typings';
